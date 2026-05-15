@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ultimate Tic Tac Toe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:black;
+overflow:hidden;
+color:white;
+}
+
+/* STAR BACKGROUND */
+
+.stars{
+position:fixed;
+width:100%;
+height:100%;
+overflow:hidden;
+z-index:-1;
+}
+
+.star{
+position:absolute;
+width:3px;
+height:3px;
+background:white;
+border-radius:50%;
+opacity:.7;
+animation:move linear infinite;
+}
+
+@keyframes move{
+from{
+transform:translateY(0);
+}
+to{
+transform:translateY(100vh);
+}
+}
+
+/* LOADING */
+
+#loading{
+position:fixed;
+width:100%;
+height:100%;
+background:black;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:999;
+}
+
+.loader{
+width:110px;
+height:110px;
+border-radius:50%;
+border:10px solid #111;
+border-top:10px solid #00bfff;
+animation:spin 1s linear infinite;
+
+box-shadow:
+0 0 20px #00bfff,
+0 0 60px #00bfff;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
+
+#loading h1{
+margin-top:25px;
+font-size:35px;
+font-family:'Orbitron',sans-serif;
+letter-spacing:3px;
+color:#00bfff;
+text-shadow:
+0 0 15px #00bfff,
+0 0 30px #00bfff;
+}
+
+/* MENU MODERN */
+
+#menu{
+display:none;
+width:100%;
+height:100vh;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+padding:20px;
+position:relative;
+}
+
+.menu-box{
+width:350px;
+max-width:95%;
+
+padding:35px 25px;
+
+background:rgba(255,255,255,.05);
+
+border:1px solid rgba(255,255,255,.1);
+
+backdrop-filter:blur(20px);
+
+border-radius:30px;
+
+box-shadow:
+0 0 30px rgba(0,191,255,.25),
+0 0 60px rgba(0,191,255,.1);
+
+display:flex;
+flex-direction:column;
+align-items:center;
+
+animation:menuShow 1s ease;
+}
+
+@keyframes menuShow{
+
+from{
+opacity:0;
+transform:translateY(40px) scale(.9);
+}
+
+to{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+
+}
+
+.logo{
+font-family:'Orbitron',sans-serif;
+font-size:42px;
+font-weight:900;
+letter-spacing:4px;
+margin-bottom:10px;
+
+background:linear-gradient(
+90deg,
+#00bfff,
+#00ff99,
+#00bfff
+);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:logoMove 4s linear infinite;
+background-size:300%;
+text-align:center;
+}
+
+@keyframes logoMove{
+
+0%{
+background-position:0%;
+}
+
+100%{
+background-position:300%;
+}
+
+}
+
+.creator{
+margin-bottom:25px;
+font-size:14px;
+font-family:'Orbitron',sans-serif;
+letter-spacing:2px;
+color:#ffffffcc;
+text-shadow:
+0 0 10px #00bfff;
+}
+
+/* MODE */
+
+.mode{
+display:flex;
+gap:10px;
+margin-bottom:20px;
+width:100%;
+}
+
+.mode button{
+flex:1;
+
+padding:14px;
+
+border:none;
+border-radius:16px;
+
+background:rgba(255,255,255,.08);
+
+color:white;
+
+font-size:15px;
+font-family:'Orbitron',sans-serif;
+font-weight:700;
+
+cursor:pointer;
+
+transition:.3s;
+}
+
+.mode button.active{
+
+background:linear-gradient(
+45deg,
+#00bfff,
+#00ff99
+);
+
+color:black;
+
+box-shadow:
+0 0 15px #00bfff,
+0 0 25px #00ff99;
+}
+
+.mode button:hover{
+transform:translateY(-3px);
+}
+
+/* INPUT */
+
+.input-box{
+width:100%;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+input{
+padding:16px;
+
+border:none;
+outline:none;
+
+border-radius:18px;
+
+background:rgba(255,255,255,.06);
+
+border:1px solid rgba(255,255,255,.1);
+
+color:white;
+
+font-size:16px;
+font-weight:600;
+
+transition:.3s;
+}
+
+input:focus{
+
+border:1px solid #00bfff;
+
+box-shadow:
+0 0 15px #00bfff;
+}
+
+/* PLAY BUTTON */
+
+.start{
+width:100%;
+
+margin-top:22px;
+
+padding:16px;
+
+border:none;
+
+border-radius:18px;
+
+background:linear-gradient(
+45deg,
+#00bfff,
+#00ff99
+);
+
+font-size:18px;
+font-family:'Orbitron',sans-serif;
+font-weight:800;
+
+color:black;
+
+cursor:pointer;
+
+transition:.3s;
+
+box-shadow:
+0 0 20px #00bfff,
+0 0 35px #00ff99;
+}
+
+.start:hover{
+
+transform:scale(1.04);
+
+box-shadow:
+0 0 30px #00bfff,
+0 0 50px #00ff99;
+}
+
+/* GAME */
+
+#game{
+display:none;
+width:100%;
+height:100vh;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+padding:20px;
+}
+
+.top-ui{
+display:flex;
+gap:20px;
+margin-bottom:20px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.card{
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.1);
+
+padding:15px 25px;
+
+border-radius:18px;
+
+font-size:20px;
+font-weight:600;
+
+backdrop-filter:blur(10px);
+
+box-shadow:
+0 0 15px rgba(0,191,255,.15);
+}
+
+#turn{
+margin-bottom:20px;
+font-size:28px;
+font-weight:600;
+text-align:center;
+
+text-shadow:
+0 0 10px rgba(255,255,255,.4);
+}
+
+.board{
+display:grid;
+grid-template-columns:repeat(3,120px);
+gap:12px;
+}
+
+.cell{
+width:120px;
+height:120px;
+
+background:rgba(255,255,255,.05);
+
+border:2px solid rgba(255,255,255,.15);
+
+backdrop-filter:blur(10px);
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:75px;
+font-family:'Orbitron',sans-serif;
+font-weight:700;
+
+cursor:pointer;
+
+border-radius:20px;
+
+transition:.2s;
+}
+
+.cell:hover{
+transform:scale(1.05);
+
+background:rgba(255,255,255,.08);
+}
+
+.x{
+color:#00bfff;
+
+text-shadow:
+0 0 10px #00bfff,
+0 0 30px #00bfff;
+}
+
+.o{
+color:#ff00aa;
+
+text-shadow:
+0 0 10px #ff00aa,
+0 0 30px #ff00aa;
+}
+
+.win{
+animation:blink .5s infinite;
+}
+
+@keyframes blink{
+50%{
+transform:scale(1.08);
+background:#222;
+}
+}
+
+#result{
+margin-top:25px;
+
+font-size:32px;
+font-weight:700;
+
+font-family:'Orbitron',sans-serif;
+
+text-align:center;
+
+padding:15px 25px;
+
+background:rgba(255,255,255,.05);
+
+border:1px solid rgba(255,255,255,.1);
+
+border-radius:20px;
+
+backdrop-filter:blur(10px);
+
+text-shadow:
+0 0 15px white;
+}
+
+.controls{
+display:flex;
+gap:15px;
+margin-top:20px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.controls button{
+padding:14px 25px;
+
+border:none;
+border-radius:16px;
+
+font-size:17px;
+font-family:'Orbitron',sans-serif;
+font-weight:700;
+
+cursor:pointer;
+
+transition:.3s;
+}
+
+.restart{
+background:linear-gradient(
+45deg,
+#00bfff,
+#00ff99
+);
+
+color:black;
+
+box-shadow:
+0 0 15px #00bfff;
+}
+
+.back{
+background:linear-gradient(
+45deg,
+#ff004c,
+#ff4444
+);
+
+color:white;
+
+box-shadow:
+0 0 15px red;
+}
+
+.controls button:hover{
+transform:scale(1.05);
+}
+
+/* MOBILE */
+
+@media(max-width:500px){
+
+.logo{
+font-size:34px;
+}
+
+.board{
+grid-template-columns:repeat(3,90px);
+gap:10px;
+}
+
+.cell{
+width:90px;
+height:90px;
+font-size:60px;
+}
+
+#turn{
+font-size:22px;
+}
+
+#result{
+font-size:24px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<!-- LOADING -->
+
+<div id="loading">
+
+<div class="loader"></div>
+
+<h1>LOADING GAME...</h1>
+
+</div>
+
+<!-- MENU -->
+
+<div id="menu">
+
+<div class="menu-box">
+
+<div class="logo">
+⚔️ TIC TAC TOE
+</div>
+
+<div class="creator">
+👑 Created By Afanda Ganteng
+</div>
+
+<div class="mode">
+
+<button id="pvpBtn"
+class="active"
+onclick="setMode('pvp')">
+👥 BERDUA
+</button>
+
+<button id="botBtn"
+onclick="setMode('bot')">
+🤖 VS AI
+</button>
+
+</div>
+
+<div class="input-box">
+
+<input type="text"
+id="playerX"
+placeholder="Nama Kamu">
+
+<input type="text"
+id="playerO"
+placeholder="Nama Player O">
+
+</div>
+
+<button class="start"
+onclick="startGame()">
+▶ PLAY GAME
+</button>
+
+</div>
+
+</div>
+
+<!-- GAME -->
+
+<div id="game">
+
+<div class="top-ui">
+
+<div class="card">
+🏆 X :
+<span id="scoreX">0</span>
+</div>
+
+<div class="card">
+🏆 O :
+<span id="scoreO">0</span>
+</div>
+
+</div>
+
+<div id="turn"></div>
+
+<div class="board" id="board"></div>
+
+<div id="result"></div>
+
+<div class="controls">
+
+<button class="restart"
+onclick="restartGame()">
+🔄 RESTART
+</button>
+
+<button class="back"
+onclick="backMenu()">
+⬅ MENU
+</button>
+
+</div>
+
+</div>
+
+<!-- SOUND -->
+
+<audio id="clickSound"
+src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+
+<audio id="winSound"
+src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
+
+<script>
+
+/* STAR */
+
+for(let i=0;i<120;i++){
+
+const star=document.createElement("div");
+
+star.classList.add("star");
+
+star.style.left=Math.random()*100+"%";
+
+star.style.top=Math.random()*100+"%";
+
+star.style.animationDuration=
+2+Math.random()*5+"s";
+
+document.getElementById("stars")
+.appendChild(star);
+
+}
+
+/* LOADING */
+
+setTimeout(()=>{
+
+document.getElementById("loading")
+.style.display="none";
+
+document.getElementById("menu")
+.style.display="flex";
+
+},2500);
+
+/* MODE */
+
+let mode="pvp";
+
+function setMode(m){
+
+mode=m;
+
+document.getElementById("pvpBtn")
+.classList.remove("active");
+
+document.getElementById("botBtn")
+.classList.remove("active");
+
+if(m=="bot"){
+
+document.getElementById("botBtn")
+.classList.add("active");
+
+document.getElementById("playerO")
+.style.display="none";
+
+}else{
+
+document.getElementById("pvpBtn")
+.classList.add("active");
+
+document.getElementById("playerO")
+.style.display="block";
+
+}
+
+}
+
+/* PLAYER */
+
+let player1="Player X";
+let player2="Player O";
+
+let scoreX=0;
+let scoreO=0;
+
+function startGame(){
+
+if(mode=="bot"){
+
+player1=
+document.getElementById("playerX").value
+|| "ANDA 😎";
+
+player2="COMPUTER 🤖";
+
+}else{
+
+player1=
+document.getElementById("playerX").value
+|| "Player X";
+
+player2=
+document.getElementById("playerO").value
+|| "Player O";
+
+}
+
+document.getElementById("menu")
+.style.display="none";
+
+document.getElementById("game")
+.style.display="flex";
+
+createBoard();
+
+updateTurn();
+
+}
+
+/* GAME */
+
+const board=
+document.getElementById("board");
+
+const turnText=
+document.getElementById("turn");
+
+const result=
+document.getElementById("result");
+
+let current="X";
+
+let cells=[];
+
+let over=false;
+
+function createBoard(){
+
+board.innerHTML="";
+
+cells=[];
+
+for(let i=0;i<9;i++){
+
+const cell=
+document.createElement("div");
+
+cell.classList.add("cell");
+
+cell.onclick=()=>play(cell,i);
+
+board.appendChild(cell);
+
+cells.push(cell);
+
+}
+
+}
+
+function updateTurn(){
+
+turnText.innerHTML=
+current=="X"
+? "Giliran : "+player1+" ❌"
+: "Giliran : "+player2+" ⭕";
+
+}
+
+function play(cell,index){
+
+if(cell.innerHTML!=""||over)return;
+
+document.getElementById("clickSound").play();
+
+cell.innerHTML=current;
+
+cell.classList.add(current.toLowerCase());
+
+checkWin();
+
+current=current=="X"?"O":"X";
+
+if(!over){
+
+updateTurn();
+
+if(mode=="bot"&&current=="O"){
+
+setTimeout(botMove,500);
+
+}
+
+}
+
+}
+
+/* AI */
+
+function botMove(){
+
+let empty=[];
+
+cells.forEach((c,i)=>{
+
+if(c.innerHTML==""){
+
+empty.push(i);
+
+}
+
+});
+
+if(empty.length==0||over)return;
+
+let random=
+empty[Math.floor(Math.random()*empty.length)];
+
+cells[random].innerHTML="O";
+
+cells[random].classList.add("o");
+
+checkWin();
+
+current="X";
+
+if(!over){
+
+updateTurn();
+
+}
+
+}
+
+/* WIN */
+
+function checkWin(){
+
+const win=[
+
+[0,1,2],
+[3,4,5],
+[6,7,8],
+
+[0,3,6],
+[1,4,7],
+[2,5,8],
+
+[0,4,8],
+[2,4,6]
+
+];
+
+for(let p of win){
+
+let[a,b,c]=p;
+
+if(
+
+cells[a].innerHTML&&
+cells[a].innerHTML==
+cells[b].innerHTML&&
+cells[a].innerHTML==
+cells[c].innerHTML
+
+){
+
+over=true;
+
+cells[a].classList.add("win");
+cells[b].classList.add("win");
+cells[c].classList.add("win");
+
+document.getElementById("winSound").play();
+
+let winner=
+cells[a].innerHTML=="X"
+? player1
+: player2;
+
+if(cells[a].innerHTML=="X"){
+
+scoreX++;
+
+document.getElementById("scoreX")
+.innerHTML=scoreX;
+
+}else{
+
+scoreO++;
+
+document.getElementById("scoreO")
+.innerHTML=scoreO;
+
+}
+
+result.innerHTML=
+"🏆 "+winner+" MENANG";
+
+return;
+
+}
+
+}
+
+let draw=
+cells.every(c=>c.innerHTML!="");
+
+if(draw){
+
+over=true;
+
+result.innerHTML="😹 SERI";
+
+}
+
+}
+
+/* RESTART */
+
+function restartGame(){
+
+over=false;
+
+current="X";
+
+result.innerHTML="";
+
+createBoard();
+
+updateTurn();
+
+}
+
+/* BACK */
+
+function backMenu(){
+
+document.getElementById("game")
+.style.display="none";
+
+document.getElementById("menu")
+.style.display="flex";
+
+restartGame();
+
+}
+
+</script>
+
+</body>
+  </html>
